@@ -1,12 +1,14 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"go-file/common"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"log"
-	"os"
 )
 
 var DB *gorm.DB
@@ -22,25 +24,42 @@ func createAdminAccount() {
 	}).FirstOrCreate(&user)
 }
 
-func CountTable(tableName string) (num int) {
+func CountTable(tableName string) (num int64) {
 	DB.Table(tableName).Count(&num)
 	return
 }
 
-func InitDB() (db *gorm.DB, err error) {
-	if os.Getenv("SQL_DSN") != "" {
+func InitDB(configInfo *common.ConfigModel) (db *gorm.DB, err error) {
+	mysqlInfo := configInfo.MySql
+	if mysqlInfo != nil {
 		// Use MySQL
-		db, err = gorm.Open("mysql", os.Getenv("SQL_DSN"))
+		host := mysqlInfo.Host
+		port := mysqlInfo.Port
+		user := mysqlInfo.User
+		password := mysqlInfo.Password
+		dbName := mysqlInfo.Dbname
+		prefix := mysqlInfo.Prefix
+		maxIdleConn := mysqlInfo.MaxIdleConn
+		maxOpenConn := mysqlInfo.MaxOpenConn
+		dns := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", user, password, host, port, dbName)
+		db, err = gorm.Open(mysql.Open(dns), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix:   prefix, // 表前缀
+				SingularTable: true,   // 禁用表名复数
+			}})
+		sqlDb, _ := db.DB()
+		sqlDb.SetMaxIdleConns(maxIdleConn)
+		sqlDb.SetMaxOpenConns(maxOpenConn)
 	} else {
 		// Use SQLite
-		db, err = gorm.Open("sqlite3", common.SQLitePath)
+		db, err = gorm.Open(sqlite.Open(configInfo.Server.SqlitePath), &gorm.Config{})
 	}
 	if err == nil {
 		DB = db
-		db.AutoMigrate(&File{})
-		db.AutoMigrate(&Image{})
-		db.AutoMigrate(&User{})
-		db.AutoMigrate(&Option{})
+		_ = db.AutoMigrate(&File{})
+		_ = db.AutoMigrate(&Image{})
+		_ = db.AutoMigrate(&User{})
+		_ = db.AutoMigrate(&Option{})
 		createAdminAccount()
 		return DB, err
 	} else {

@@ -1,7 +1,6 @@
 package model
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"strings"
 )
 
@@ -13,6 +12,10 @@ type User struct {
 	Role        int    `json:"role" gorm:"type:int;default:1"`   // admin, common
 	Status      int    `json:"status" gorm:"type:int;default:1"` // enabled, disabled
 	Token       string `json:"token"`
+}
+
+func (that *User) TableName() string {
+	return "user"
 }
 
 func (user *User) Insert() error {

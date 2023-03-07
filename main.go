@@ -10,9 +10,10 @@ import (
 	"go-file/router"
 	"html/template"
 	"log"
-	"os"
 	"strconv"
 )
+
+var AppConfig = new(common.ConfigModel)
 
 func loadTemplate() *template.Template {
 	var funcMap = template.FuncMap{
@@ -23,15 +24,21 @@ func loadTemplate() *template.Template {
 }
 
 func main() {
-	if os.Getenv("GIN_MODE") != "debug" {
+	_config, _err := common.ReadAppConfig()
+	if _err != nil {
+		panic("系统配置文件缺失")
+	}
+	AppConfig = _config
+	common.Init()
+	//
+	if AppConfig.Gin.Mode != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	// Initialize SQL Database
-	db, err := model.InitDB()
+	_, err := model.InitDB(AppConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	// Initialize Redis
 	err = common.InitRedisClient()
@@ -57,7 +64,7 @@ func main() {
 	}
 
 	router.SetRouter(server)
-	var realPort = os.Getenv("PORT")
+	var realPort = AppConfig.Gin.Port
 	if realPort == "" {
 		realPort = strconv.Itoa(*common.Port)
 	}

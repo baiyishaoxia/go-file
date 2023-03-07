@@ -1,0 +1,34 @@
+#config information
+#go run *.go --port 8001 --video /d/system/video --path /d/Document --no-browser true
+#gin config information
+gin:
+  mode: debug #debug,release,test
+  host: 0.0.0.0 #主机
+  port: 3000 #端口
+  enable_console_route: true #控制台是否输出路由
+
+#server
+server:
+  session_secret: 123456 #设置会话密钥（默认随机生成）
+  upload_path: upload #设置文件上传路径（默认为工作目录下面的 upload 目录）
+  sqlite_path:  #修改默认的 SQLite 数据库文件的位置（默认在工作目录下，名称为 .go-file.db）
+
+#MySQL
+mysql:
+  host: 127.0.0.1 #数据库连接地址
+  port: 3306 #端口
+  user: root #用户名
+  password: 123456 #密码
+  dbname: gofile #数据库
+  prefix:  #表前缀
+  max_idle_conn: 1000000 #设置连接池的空闲数大小
+  max_open_conn: 5000000 #设置最大打开连接数
+  show_sql: true #控制台是否打印SQL语句
+
+#Redis
+redis:
+  host: 127.0.0.1 #Redis连接地址
+  port: 3306 #端口
+  password: 123456 #密码
+  pool_size: 100 #池大小
+  db_num: 10 #选择db

@@ -1,9 +1,8 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"go-file/common"
+	"gorm.io/gorm"
 	"os"
 	"path"
 	"strings"
@@ -17,6 +16,10 @@ type File struct {
 	Link            string `json:"link" gorm:"unique"`
 	Time            string `json:"time"`
 	DownloadCounter int    `json:"download_counter"`
+}
+
+func (that *File) TableName() string {
+	return "files"
 }
 
 type LocalFile struct {

@@ -76,7 +76,7 @@ var SessionSecret = uuid.New().String()
 
 var SQLitePath = ".go-file.db"
 
-func init() {
+func Init() {
 	flag.Parse()
 
 	if *PrintVersion {
@@ -84,14 +84,14 @@ func init() {
 		os.Exit(0)
 	}
 
-	if os.Getenv("SESSION_SECRET") != "" {
-		SessionSecret = os.Getenv("SESSION_SECRET")
+	if appConfigInfo.Server.SessionSecret != "" {
+		SessionSecret = appConfigInfo.Server.SessionSecret
 	}
-	if os.Getenv("SQLITE_PATH") != "" {
-		SQLitePath = os.Getenv("SQLITE_PATH")
+	if appConfigInfo.Server.SqlitePath != "" {
+		SQLitePath = appConfigInfo.Server.SqlitePath
 	}
-	if os.Getenv("UPLOAD_PATH") != "" {
-		UploadPath = os.Getenv("UPLOAD_PATH")
+	if appConfigInfo.Server.UploadPath != "" {
+		UploadPath = appConfigInfo.Server.UploadPath
 		ExplorerRootPath = UploadPath
 		ImageUploadPath = path.Join(UploadPath, "images")
 		VideoServePath = UploadPath

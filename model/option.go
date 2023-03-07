@@ -39,15 +39,15 @@ func UpdateOption(key string, value string) error {
 	if key == "StatEnabled" && value == "true" && !common.RedisEnabled {
 		return errors.New("未启用 Redis，无法启用统计功能")
 	}
-
-	// Save to database first
-	option := Option{
-		Key:   key,
-		Value: value,
-	}
+	option := Option{}
 	// When updating with struct it will only update non-zero fields by default
 	// So we have to use Select here
 	if DB.Model(&option).Where("key = ?", key).Update("value", option.Value).RowsAffected == 0 {
+		// Save to database first
+		option = Option{
+			Key:   key,
+			Value: value,
+		}
 		DB.Create(&option)
 	}
 	// Update OptionMap

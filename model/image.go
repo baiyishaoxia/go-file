@@ -1,7 +1,6 @@
 package model
 
 import (
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"go-file/common"
 	"os"
 	"path/filepath"
@@ -11,6 +10,10 @@ type Image struct {
 	Filename string `json:"type"`
 	Uploader string `json:"uploader"`
 	Time     string `json:"time"`
+}
+
+func (that *Image) TableName() string {
+	return "image"
 }
 
 func AllImage() ([]*Image, error) {
