@@ -1,5 +1,5 @@
 #config information
-#go run *.go --port 8001 --video /d/system/video --path /d/Document --no-browser true
+
 #gin config information
 gin:
   mode: debug #debug,release,test
@@ -28,7 +28,7 @@ mysql:
 #Redis
 redis:
   host: 127.0.0.1 #Redis连接地址
-  port: 3306 #端口
+  port: 6379 #端口
   password: 123456 #密码
   pool_size: 100 #池大小
   db_num: 10 #选择db
