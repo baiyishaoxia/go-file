@@ -12,6 +12,10 @@ type Option struct {
 	Value string `json:"value"`
 }
 
+func (that *Option) TableName() string {
+	return "options"
+}
+
 func AllOption() ([]*Option, error) {
 	var options []*Option
 	var err error

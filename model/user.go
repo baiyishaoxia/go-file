@@ -15,7 +15,7 @@ type User struct {
 }
 
 func (that *User) TableName() string {
-	return "user"
+	return "users"
 }
 
 func (user *User) Insert() error {

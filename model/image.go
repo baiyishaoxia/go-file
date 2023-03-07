@@ -13,7 +13,7 @@ type Image struct {
 }
 
 func (that *Image) TableName() string {
-	return "image"
+	return "images"
 }
 
 func AllImage() ([]*Image, error) {
